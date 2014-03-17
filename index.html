@@ -1,0 +1,80 @@
+<?php 
+session_start(); 
+$mongo = new MongoClient();
+$coll = $mongo->helloworld->users;
+?>
+
+<html>
+<head>
+<title>HELLOworld!</title>
+<link rel="SHORTCUT ICON"
+       href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+<div class="header">
+  <div class="title">
+<center><img src="images/helloworld.png" height="100px" /></center>
+</div>
+<div class="login">
+<?php
+   if (isset($_SESSION['logged']) and $_SESSION['logged'] == true){
+   echo "<br><br>Logged in as <i>" . $_SESSION['username'] . "</i>.<br>View <a href='profile.html?user=" . $_SESSION['username'] . "'>profile</a> | <a href='logout.php'>Logout</a>";
+   }
+   else{
+   echo "Log in below.<br />";
+   echo "<form action='login.php' method='post' name='login_form'>
+   Username: <input type='text' name='username' /><br />
+   Password: <input type='password' name='password' id='password'/><br />
+   <input type='submit' value='Login' />
+   <input type='button' value='Create Account' onclick=\"window.location.href='create.html'\"/>
+</form>";
+}
+?>
+</div>
+</div>
+<div class="wrapper">
+<div class="main">
+<div style="width:90%;padding-left:1%;padding-right:1%;">
+<h1>The HELLOworld Official Blog</h1>
+<?php
+$item = $coll->findOne(array('userid'=>0));
+$cursor = array_slice(array_reverse($item['blog']),0,5);
+if (sizeof($cursor) == 0){
+  echo "There doesn't seem to be anything here.";
+}
+foreach($cursor as $doc){
+  $title = $doc['title'];
+  $time = $doc['timestamp'];
+  $body = $doc['body'];
+  $postedby = $doc['posted_by'];
+  echo "<br /><span class = 'posttitle'>" . $title . "</span><br />";
+  echo "<span class = 'posttime'>" . $time . " by " . $postedby . "</span><br /><br />";
+  echo "<div class = 'post'>" . $body . "</div><br />";
+}
+?>
+</div>
+<div class="contents">
+<center><h1>Contents</h1></center>
+<ul>
+<li><a href="index.html">home</a></li>
+</ul>
+<ul>
+<?php
+$cursor = $coll->find(array('profile'=>array('$exists'=>true)))->sort(array('login.username'=>1));
+foreach ($cursor as $doc){
+  $uname = $doc['login']['username'];
+  echo "<li><a href='profile.html?user=" . $uname . "'>" . $uname . "</a></li>";
+}
+?>
+</ul>
+</div>
+</div>
+</div>
+<div class="copyright">
+<tt>&copy; 2013 Stephen Greco. All Rights Reserved.</tt>
+</div>
+</body>
+</html>

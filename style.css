@@ -1,0 +1,164 @@
+body {
+  color:ffffff;
+  background-color:000000;
+  font-size:14px;
+  font-family:"Courier New",courier,monospace;
+  font-style:bold;
+  height:100%;
+  width:100%;
+  margin:0px;
+  overflow-y:hidden;
+}
+
+p{
+  margin-top:0;
+  margin-bottom:0;
+}
+
+.header {
+  position:fixed;
+  left:0px;
+  top:0px;
+  background-color:0000ff;
+  background-image:url('images/bluefade.png');
+  background-position:bottom;
+  background-repeat:repeat-x;
+  height:130px;
+  width:100%;
+  text-align:center;
+  font-size:72px;
+}
+
+.title {
+  position:fixed;
+  left:0px;
+  width:70%;
+  min-width:645px;
+}
+
+.login {
+  position:fixed;
+  left:70%;
+  height:130px;
+  width:300px;
+  text-align:left;
+  font-size:20px;
+}
+
+.photo {
+  overflow-y:hidden;
+  overflow-x:hidden;
+  padding-left:25px;
+  padding-right:25px;
+  width:4500px;
+}
+
+.photo img{
+  width:16%;
+  max-height:200px;
+  padding-left:1%;
+  padding-right:1%;
+}
+
+.blog{
+  overflow-x:hidden;
+  width:40%;
+  position:absolute;
+  left:500px;
+  top:0px;
+}
+
+.copyright {
+  position:fixed;
+  bottom:0px;
+  background-color:ffffff;
+  height:13px;
+  width:100%;
+  text-align:center;
+  font-size:10px;
+  color:000000;
+  margin:0px;
+}
+
+.main {
+  position:absolute;
+  width:75%;
+  height:100%;
+  margin-left:auto;
+  margin-right:auto;
+  color:ffffff;
+}
+
+.wrapper{
+  position:fixed;
+  width:100%;
+  bottom:10px;
+  top:130px;
+  left:0px;
+  overflow-x:hidden;
+  overflow-y:scroll;
+}
+
+.profile{
+  width:450px;
+  overflow:hidden;
+  padding-bottom:50px;
+  padding-left:25px;
+}
+
+.contents{
+  position:fixed;
+  top:120px;
+  left:80%;
+  width:20%;
+  color:ffffff;
+  overflow:hidden;
+}
+
+.posttitle{
+  font-size:16pt;
+  font-family:"times new roman",times,serif;
+  font-weight:bold;
+}
+
+.posttime{
+  padding-left:5px;
+  font-size:10pt;
+}
+
+.post{
+  padding-left:15px;
+  max-width:800px;
+}
+
+.about{
+  position:fixed;
+  overflow-y:auto;
+  left:60%;
+  top:120px;
+  width:20%;
+  height:100%;
+  padding-left:10px;
+  padding-right:10px;
+}
+
+h1 {
+  font-size:24pt;
+  font-family:"times new roman",times,serif;
+}
+
+h4 {
+  margin-top:-15px;
+}
+
+p {
+  padding-bottom:14px;
+}
+
+a:link{
+  color:ffffff;
+}
+
+a:visited{
+  color:eeeeee;
+}

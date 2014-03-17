@@ -1,0 +1,163 @@
+<?php 
+session_start(); 
+$mongo = new MongoClient();
+$coll = $mongo->helloworld->users;
+?>
+
+<html>
+<head>
+<?php
+$user = $_GET['user'];
+echo "<title>" . $user . "</title>";
+$item = $coll->findOne(array('login.username'=>$user, 'profile'=>array('$exists'=>true)));
+?>
+<link rel="SHORTCUT ICON"
+       href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+<div class="header">
+  <div class="title">
+<center><img src="images/helloworld.png" height="100px" /></center>
+</div>
+
+<div class="login">
+<?php
+   if (isset($_SESSION['logged']) and $_SESSION['logged'] == true){
+   echo "<br><br>Logged in as <i>" . $_SESSION['username'] . "</i>.<br>View <a href='profile.html?user=" . $_SESSION['username'] . "'>profile</a> | <a href='logout.php'>Logout</a>";
+   }
+   else{
+   echo "Log in below.<br />";
+   echo "<form action='login.php' method='post' name='login_form'>
+   Username: <input type='text' name='username' /><br />
+   Password: <input type='password' name='password' id='password'/><br />
+   <input type='submit' value='Login' />
+   <input type='button' value='Create Account' onclick=\"window.location.href='create.html'\"/>
+</form>";
+}
+?>
+</div>
+</div>
+<div class="wrapper">
+<div class="main">
+<div class="profile">
+<?php
+if (is_null($item)){
+  echo "<h1>404: User not found</h1>";
+}
+else{
+$row = $item['profile'];
+$name = $row['first'] . " " . $row['last'];
+$age = $row['age'];
+$gender = $row['gender'];
+$email = $item['login']['email'];
+$location = $row['location'];
+$image = $row['photo'];
+$quote = $row['quote'];
+$logged = $item['login']['logged_in'];
+$isadmin = $item['login']['is_admin'];
+echo "<h1>" . $name . "'s Profile</h1>";
+echo "<h4>";
+if ($user == "sgreco"){
+  echo "<img src='images/creator_logo.png' height=15px /> ";
+}
+if ($isadmin){
+echo "<img src='images/admin_logo.png' height=15px /> ";
+}
+if ($user == $_SESSION['username']){
+  echo "<a href='profile_update.html'>edit profile</a>";
+}
+echo "</h4>";
+echo "<img src='" . $image . "' alt='Profile Pic' style='float:left;margin:0 5px 0 0;' width=200px />";
+if ($logged){
+echo "<img src='http://25.media.tumblr.com/tumblr_lnmpl4PME91qehj9qo1_500.gif' width=100px /><br />";
+}
+echo "<b>Age:</b> " . $age . " years old<br />";
+echo "<b>Email:</b> " . $email . "<br />";
+if ($gender == "M"){
+  echo "<b>Gender:</b> Male<br />";
+}
+if ($gender == "F"){
+  echo "<b>Gender:</b> Female<br />";
+}
+echo "<b>Location:</b> " . $location . "<br />";
+echo "<b>Favorite Quote:</b> <q>" . $quote . "</q><br />";
+}
+?>
+</div>
+<div class="photo">
+<?php
+if (!is_null($item)){
+echo "<h1>More Photos</h1>";
+function is_profile($var){
+  return !$var['profile_pic'];
+}
+$cursor = array_reverse($item['photos']);
+$cursor = array_slice(array_filter($cursor,is_profile),0,6);
+if (sizeof($cursor) == 0){
+  echo "There doesn't seem to be anything here.";
+}
+foreach($cursor as $row){
+    $image = $row['source'];
+    echo "<img src='" . $image . "' width=200px /><br /><br />";
+  }
+echo "<br><small>Note: This feature is still in development.</small>";
+}
+?>
+</div>
+<div class="blog">
+<?php
+if (!is_null($item)){
+echo "<left><h1>Blog<small><small> (beta)</small></small></h1></left>";
+$cursor = array_slice(array_reverse($item['blog']),0,3);
+if (sizeof($cursor) == 0){
+  echo "There doesn't seem to be anything here.";
+  if ($user == $_SESSION['username']){
+  echo "<br><a href='blog_add.html'>Click here to add your first post!</a>";
+  }
+}
+else{
+  echo "<h4><a href='blog.html?user=".$user."'>view more</a>";
+  if ($user == $_SESSION['username']){
+  echo " | <a href='blog_add.html'>add post</a>";
+  echo " | <a href='blog_edit.html'>edit posts</a>";
+  }
+  echo "</h4>";
+foreach($cursor as $doc){
+  $title = $doc['title'];
+  $time = $doc['timestamp'];
+  $body = $doc['body'];
+  echo "<br /><span class = 'posttitle'>" . $title . "</span><br />";
+  echo "<span class = 'posttime'>" . $time . "</span><br /><br />";
+  echo "<div class = 'post'>" . $body . "</div><br />";
+}
+}
+}
+?>
+
+</div>
+<div class="contents">
+<center><h1>Contents</h1></center>
+<ul>
+<li><a href="index.html">home</a>
+</ul>
+<ul>
+<?php
+$cursor = $coll->find(array('profile'=>array('$exists'=>true)))->sort(array('login.username'=>1));
+foreach ($cursor as $doc){
+  $uname = $doc['login']['username'];
+  echo "<li><a href='profile.html?user=" . $uname . "'>" . $uname . "</a></li>";
+}
+?>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="copyright">
+<tt>&copy; 2013 Stephen Greco. All Rights Reserved.</tt>
+</div>
+</body>
+</html>

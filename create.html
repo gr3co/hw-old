@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Create Account</title>
+<link rel="SHORTCUT ICON"
+       href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+<div class="header">
+<center><img src="images/helloworld.png" height="100px" /></center>
+</div>
+
+<div class="wrapper">
+<div class="main" style="padding-left:20px;">
+<h1>Create New Account</h1>
+<form action="create.php" method="post" name="create_form">
+   Username:  <input type="text" name="username" maxlength="16" size="32"/><br />
+   Password:  <input type="password" name="password" id="password" maxlength="32" size="32" /><br />
+   E-mail: &emsp; <input type="text" name="email" maxlength="32" size="32" /><br /><br />
+   First: <input type="text" name="first" maxlength="16" size="24" /> 
+   M: <input type="text" name="middle" maxlength="1" size="1" /><br />
+   Last: <input type="text" name="last" maxlength="16" size="38" /><br />
+   Age: <input type="text" name="age" maxlength="3" size="2" />
+   Gender: <input type="radio" name="gender" value="M" />Male
+<input type="radio" name="gender" value="F" />Female<br />
+	Location: <input type="text" name="location" maxlength="32" size="32" /><br />
+	Favorite Quote: <input type="text" name="quote" maxlength="200" size="22" /><br /><br />
+  Photo URL: <input type="text" name="pic" maxlength="128" size="30" /><br /><br />
+   <input type="submit" value="Create Account" />
+</form>
+<br />
+Passwords must be at least 6 characters long.<br />
+Quote must be 200 characters or less, including spaces.<br />
+Photo must be a JPEG or PNG file, hosted online.<br />
+Please use Imgur for hosting and paste direct link.<br />
+</div>
+
+<div class="contents">
+<center><h1>Contents</h1></center>
+<ul>
+<li><a href="index.html">home</a>
+</ul>
+<ul>
+<?php
+$mongo = new MongoClient();
+$coll = $mongo->helloworld->users;
+$cursor = $coll->find(array('profile'=>array('$exists'=>true)))->sort(array('login.username'=>1));
+foreach ($cursor as $doc){
+  $uname = $doc['login']['username'];
+  echo "<li><a href='profile.html?user=" . $uname . "'>" . $uname . "</a></li>";
+}
+?>
+</ul>
+</div>
+</div>
+<div class="copyright">
+<tt>&copy; 2013 Stephen Greco. All Rights Reserved.</tt>
+</div>
+</body>
+</html>

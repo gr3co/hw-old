@@ -1,0 +1,106 @@
+<?php 
+session_start(); 
+$mongo = new MongoClient();
+$coll = $mongo->helloworld->users;
+?>
+
+<html>
+<head>
+<title>Edit Profile</title>
+<link rel="SHORTCUT ICON"
+       href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<div class="header">
+  <div class="title">
+<center><img src="images/helloworld.png" height="100px" /></center>
+</div>
+<div class="login">
+<?php
+   if (isset($_SESSION['logged']) and $_SESSION['logged'] == true){
+   echo "<br><br>Logged in as <i>" . $_SESSION['username'] . "</i>.<br>View <a href='profile.html?user=" . $_SESSION['username'] . "'>profile</a> | <a href='logout.php'>Logout</a>";
+   }
+   else{
+   echo "Log in below.<br />";
+   echo "<form action='login.php' method='post' name='login_form'>
+   Username: <input type='text' name='username' /><br />
+   Password: <input type='password' name='password' id='password'/><br />
+   <input type='submit' value='Login' />
+   <input type='button' value='Create Account' onclick=\"window.location.href='create.html'\"/>
+</form>";
+}
+?>
+</div>
+</div>
+<div class="wrapper">
+<div class="main" style="padding-left:20px;">
+<?php
+
+if (!$_SESSION['logged']){
+  echo "Error: You must be logged in to use this page.";
+}
+else{
+echo "<h1>Edit your profile:</h1>";
+$item = $coll->findOne(array('userid'=>$_SESSION['userid']));
+$row = $item['profile'];
+$first = $row['first'];
+$middle = $row['middle'];
+$last = $row['last'];
+$age = $row['age'];
+$gender = $row['gender'];
+$email = $item['login']['email'];
+$location = $row['location'];
+$quote = $row['quote'];
+
+echo '<form action="profile_update.php" method="post" name="create_form">
+   E-mail: &emsp; <input type="text" name="email" maxlength="32" size="32" value="'.$email.'"/><br />
+   First: <input type="text" name="first" maxlength="16" size="24" value="'.$first.'" /> 
+   M: <input type="text" name="middle" maxlength="1" size="1" value="'.$middle.'"/><br />
+   Last: <input type="text" name="last" maxlength="16" size="38" value="'.$last.'" /><br />
+   Age: <input type="text" name="age" maxlength="3" size="2" value="'.$age.'"/>';
+   if ($gender = 'M'){
+  echo 'Gender: <input type="radio" name="gender" value="M" checked/>Male
+  <input type="radio" name="gender" value="F" />Female<br />';
+  }
+  elseif ($gender = 'F'){
+  echo 'Gender: <input type="radio" name="gender" value="M" />Male
+  <input type="radio" name="gender" value="F" checked />Female<br />';
+  }
+  else{
+    echo 'Gender: <input type="radio" name="gender" value="M" />Male
+  <input type="radio" name="gender" value="F" />Female<br />';
+  }
+  echo 'Location: <input type="text" name="location" maxlength="32" size="32" value="'.$location.'" /><br />
+	Favorite Quote: <input type="text" name="quote" maxlength="200" size="22" value="'.$quote.'" /><br /><br />
+  <input type="submit" value="Update profile" />
+</form>';
+}
+?>
+</div>
+
+
+<div class="contents">
+<center><h1>Contents</h1></center>
+<ul>
+<li><a href="/">home</a>
+</ul>
+<ul>
+<?php
+$mongo = new MongoClient();
+$coll = $mongo->helloworld->users;
+$cursor = $coll->find(array('profile'=>array('$exists'=>true)))->sort(array('login.username'=>1));
+foreach ($cursor as $doc){
+  $uname = $doc['login']['username'];
+  echo "<li><a href='profile.html?user=" . $uname . "'>" . $uname . "</a></li>";
+}
+?>
+</ul>
+</div>
+</div>
+<div class="copyright">
+<tt>&copy; 2013 Stephen Greco. All Rights Reserved.</tt>
+</div>
+</body>
+</html>
